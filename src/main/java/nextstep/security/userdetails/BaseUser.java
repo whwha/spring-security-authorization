@@ -1,6 +1,6 @@
 package nextstep.security.userdetails;
 
-public class BaseUser implements UserDetails{
+public class BaseUser implements UserDetails {
 
     private final String username;
     private final String password;

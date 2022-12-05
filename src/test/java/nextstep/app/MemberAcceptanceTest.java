@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MemberAcceptanceTest extends AcceptanceTest {
-    private static final Member TEST_MEMBER = InmemoryMemberRepository.TEST_MEMBER_1;
+    private static final Member TEST_MEMBER = InmemoryMemberRepository.ADMIN_MEMBER;
 
     @Test
     void get_members_after_form_login() {

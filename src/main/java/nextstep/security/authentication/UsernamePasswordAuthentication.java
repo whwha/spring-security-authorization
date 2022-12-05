@@ -1,5 +1,8 @@
 package nextstep.security.authentication;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class UsernamePasswordAuthentication implements Authentication {
     private final String username;
     private final String password;
@@ -28,6 +31,11 @@ public class UsernamePasswordAuthentication implements Authentication {
     @Override
     public Object getCredentials() {
         return password;
+    }
+
+    @Override
+    public Set<String> getAuthorities() {
+        return Collections.emptySet();
     }
 
     @Override

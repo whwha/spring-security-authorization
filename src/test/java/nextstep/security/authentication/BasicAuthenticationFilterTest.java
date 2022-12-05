@@ -20,7 +20,7 @@ import java.util.Base64;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BasicAuthenticationFilterTest {
-    private static final Member TEST_MEMBER = InmemoryMemberRepository.TEST_MEMBER_1;
+    private static final Member TEST_MEMBER = InmemoryMemberRepository.ADMIN_MEMBER;
     private BasicAuthenticationFilter filter;
 
     @BeforeEach

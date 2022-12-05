@@ -22,32 +22,45 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class MemberTest {
-    private static final Member TEST_MEMBER = InmemoryMemberRepository.TEST_MEMBER_1;
+    private static final Member TEST_ADMIN_MEMBER = InmemoryMemberRepository.ADMIN_MEMBER;
+    private static final Member TEST_USER_MEMBER = InmemoryMemberRepository.USER_MEMBER;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    void request_with_basic_success() throws Exception {
-        ResultActions loginResponse = requestWithBasicAuth(TEST_MEMBER.getEmail(), TEST_MEMBER.getPassword());
+    void request_success_with_admin_user() throws Exception {
+        ResultActions response = requestWithBasicAuth(TEST_ADMIN_MEMBER.getEmail(), TEST_ADMIN_MEMBER.getPassword());
 
-        loginResponse.andExpect(status().isOk())
+        response.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertThat(authentication.isAuthenticated()).isTrue();
+        assertThat(authentication.getAuthorities()).contains("ADMIN");
     }
 
     @Test
-    void login_fail_with_no_user() throws Exception {
+    void request_fail_with_general_user() throws Exception {
+        ResultActions response = requestWithBasicAuth(TEST_USER_MEMBER.getEmail(), TEST_USER_MEMBER.getPassword());
+
+        response.andExpect(status().isForbidden());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        assertThat(authentication.isAuthenticated()).isTrue();
+        assertThat(authentication.getAuthorities()).isEmpty();
+    }
+
+    @Test
+    void request_fail_with_no_user() throws Exception {
         ResultActions response = requestWithBasicAuth("none", "none");
 
         response.andExpect(status().isUnauthorized());
     }
 
     @Test
-    void login_fail_with_invalid_password() throws Exception {
-        ResultActions response = requestWithBasicAuth(TEST_MEMBER.getEmail(), "invalid");
+    void request_fail_invalid_password() throws Exception {
+        ResultActions response = requestWithBasicAuth(TEST_ADMIN_MEMBER.getEmail(), "invalid");
 
         response.andExpect(status().isUnauthorized());
     }
