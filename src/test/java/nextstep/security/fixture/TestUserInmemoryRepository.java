@@ -1,16 +1,24 @@
 package nextstep.security.fixture;
 
-import nextstep.security.userdetails.BaseUser;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import nextstep.security.userdetails.BaseUser;
 
 public class TestUserInmemoryRepository {
-    public static final BaseUser TEST_MEMBER_1 = new BaseUser("a@a.com", "password");
-    public static final BaseUser TEST_MEMBER_2 = new BaseUser("b@b.com", "password");
+    public static final BaseUser TEST_MEMBER_1 = new BaseUser(
+        "a@a.com",
+        "password",
+        Set.of("ADMIN")
+    );
+    public static final BaseUser TEST_MEMBER_2 = new BaseUser(
+        "b@b.com",
+        "password",
+        Set.of("MEMBER")
+    );
     private static final Map<String, BaseUser> users = new HashMap<>();
 
     static {

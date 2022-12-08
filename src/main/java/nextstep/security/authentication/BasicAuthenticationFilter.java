@@ -1,31 +1,41 @@
 package nextstep.security.authentication;
 
-import nextstep.security.context.SecurityContextHolder;
-import nextstep.security.exception.AuthenticationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.filter.GenericFilterBean;
-
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Optional;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Optional;
+import nextstep.security.context.SecurityContext;
+import nextstep.security.context.SecurityContextHolder;
+import nextstep.security.context.SecurityContextRepository;
+import nextstep.security.exception.AuthenticationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.filter.GenericFilterBean;
 
 public class BasicAuthenticationFilter extends GenericFilterBean {
 
     private final AuthenticationManager authenticationManager;
+    private final SecurityContextRepository securityContextRepository;
 
-    public BasicAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public BasicAuthenticationFilter(
+        AuthenticationManager authenticationManager,
+        SecurityContextRepository securityContextRepository
+    ) {
         this.authenticationManager = authenticationManager;
+        this.securityContextRepository = securityContextRepository;
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(
+        ServletRequest request,
+        ServletResponse response,
+        FilterChain chain
+    ) throws IOException, ServletException {
 
         try {
             Authentication authRequest = convertAuthenticationRequest((HttpServletRequest) request);
@@ -36,7 +46,13 @@ public class BasicAuthenticationFilter extends GenericFilterBean {
             }
 
             Authentication authResult = authenticationManager.authenticate(authRequest);
-            SecurityContextHolder.getContext().setAuthentication(authResult);
+            final SecurityContext context = SecurityContextHolder.getContext();
+            context.setAuthentication(authResult);
+            securityContextRepository.saveContext(
+                context,
+                (HttpServletRequest) request,
+                (HttpServletResponse) response
+            );
         } catch (AuthenticationException e) {
             SecurityContextHolder.clearContext();
             ((HttpServletResponse) response).sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
@@ -67,6 +83,4 @@ public class BasicAuthenticationFilter extends GenericFilterBean {
 
         return UsernamePasswordAuthentication.ofRequest(email, password);
     }
-
-
 }

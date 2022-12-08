@@ -19,18 +19,28 @@ import java.io.IOException;
 
 public class UsernamePasswordAuthenticationFilter extends GenericFilterBean {
 
+    private static final MvcRequestMatcher DEFAULT_REQUEST_MATCHER = new MvcRequestMatcher(
+        HttpMethod.POST,
+        "/login"
+    );
+
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
-    private static final MvcRequestMatcher DEFAULT_REQUEST_MATCHER = new MvcRequestMatcher(HttpMethod.POST,
-            "/login");
 
-    public UsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, SecurityContextRepository securityContextRepository) {
+    public UsernamePasswordAuthenticationFilter(
+        AuthenticationManager authenticationManager,
+        SecurityContextRepository securityContextRepository
+    ) {
         this.authenticationManager = authenticationManager;
         this.securityContextRepository = securityContextRepository;
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(
+        ServletRequest request,
+        ServletResponse response,
+        FilterChain chain
+    ) throws IOException, ServletException {
 
         try {
             if (!DEFAULT_REQUEST_MATCHER.matches((HttpServletRequest) request)) {

@@ -1,7 +1,11 @@
 package nextstep.security.authentication;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Base64;
 import nextstep.app.domain.Member;
 import nextstep.app.infrastructure.InmemoryMemberRepository;
+import nextstep.security.context.HttpSessionSecurityContextRepository;
 import nextstep.security.context.SecurityContextHolder;
 import nextstep.security.fixture.MockFilterChain;
 import nextstep.security.fixture.TestUserDetailsService;
@@ -15,12 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.util.Base64;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class BasicAuthenticationFilterTest {
-    private static final Member TEST_MEMBER = InmemoryMemberRepository.TEST_MEMBER_1;
+    private static final Member TEST_MEMBER = InmemoryMemberRepository.ADMIN_MEMBER;
     private BasicAuthenticationFilter filter;
 
     @BeforeEach
@@ -28,7 +28,7 @@ public class BasicAuthenticationFilterTest {
         UserDetailsService userDetailsService = new TestUserDetailsService(new TestUserInmemoryRepository());
         AuthenticationProvider provider = new UsernamePasswordAuthenticationProvider(userDetailsService);
         AuthenticationManager authenticationManager = new AuthenticationManager(provider);
-        filter = new BasicAuthenticationFilter(authenticationManager);
+        filter = new BasicAuthenticationFilter(authenticationManager, new HttpSessionSecurityContextRepository());
     }
 
     @AfterEach

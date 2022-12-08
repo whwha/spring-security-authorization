@@ -17,6 +17,10 @@ public class DefaultSecurityFilterChain implements SecurityFilterChain {
         this.filters = filters;
     }
 
+    public DefaultSecurityFilterChain(RequestMatcher requestMatcher, Filter... filters) {
+        this(requestMatcher, List.of(filters));
+    }
+
     @Override
     public boolean matches(HttpServletRequest request) {
         return requestMatcher.matches(request);

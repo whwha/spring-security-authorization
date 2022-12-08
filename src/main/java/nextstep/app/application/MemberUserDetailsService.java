@@ -19,6 +19,6 @@ public class MemberUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws AuthenticationException {
         Member member = memberRepository.findByEmail(username).orElseThrow(AuthenticationException::new);
-        return new BaseUser(member.getEmail(), member.getPassword());
+        return new BaseUser(member.getEmail(), member.getPassword(), member.getRoles());
     }
 }

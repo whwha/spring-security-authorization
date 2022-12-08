@@ -23,7 +23,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class FormLoginFilterTest {
-    private static final Member TEST_MEMBER = InmemoryMemberRepository.TEST_MEMBER_1;
+    private static final Member TEST_MEMBER = InmemoryMemberRepository.ADMIN_MEMBER;
     private UsernamePasswordAuthenticationFilter filter;
 
     @BeforeEach

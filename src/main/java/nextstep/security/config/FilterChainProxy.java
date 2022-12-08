@@ -1,13 +1,15 @@
 package nextstep.security.config;
 
-
-import org.springframework.web.filter.GenericFilterBean;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.filter.GenericFilterBean;
 
 public class FilterChainProxy extends GenericFilterBean {
 
@@ -15,6 +17,10 @@ public class FilterChainProxy extends GenericFilterBean {
 
     public FilterChainProxy(List<SecurityFilterChain> filterChains) {
         this.filterChains = filterChains;
+    }
+
+    public FilterChainProxy(SecurityFilterChain... filterChains) {
+        this(List.of(filterChains));
     }
 
     @Override
