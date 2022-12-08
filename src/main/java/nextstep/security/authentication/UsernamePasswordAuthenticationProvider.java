@@ -23,7 +23,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
             throw new AuthenticationException();
         }
 
-        return UsernamePasswordAuthentication.ofAuthenticated(username, password);
+        return UsernamePasswordAuthentication.ofAuthenticated(username, password, userDetails.getRoles());
     }
 
     @Override

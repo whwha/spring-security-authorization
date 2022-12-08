@@ -30,7 +30,7 @@ public class MemberAcceptanceTest extends AcceptanceTest {
                 .when()
                 .post("/login")
                 .then().log().all()
-                .extract();;
+                .extract();
 
         ExtractableResponse<Response> memberResponse = RestAssured.given().log().all()
                 .cookies(loginResponse.cookies())
@@ -43,5 +43,17 @@ public class MemberAcceptanceTest extends AcceptanceTest {
         assertThat(memberResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
         List<Member> members = memberResponse.jsonPath().getList(".", Member.class);
         assertThat(members.size()).isEqualTo(2);
+    }
+
+    @Test
+    void get_members_before_form_login() {
+        ExtractableResponse<Response> memberResponse = RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get("/members")
+                .then().log().all()
+                .extract();
+
+        assertThat(memberResponse.statusCode()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
 }
