@@ -2,6 +2,7 @@ package nextstep.security.authentication;
 
 import nextstep.security.context.SecurityContextHolder;
 import nextstep.security.exception.AuthenticationException;
+import nextstep.security.exception.AuthorizationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -37,9 +38,16 @@ public class BasicAuthenticationFilter extends GenericFilterBean {
 
             Authentication authResult = authenticationManager.authenticate(authRequest);
             SecurityContextHolder.getContext().setAuthentication(authResult);
+
+            if (authResult.getAuthorities().isEmpty()) {
+                throw new AuthorizationException();
+            }
         } catch (AuthenticationException e) {
             SecurityContextHolder.clearContext();
             ((HttpServletResponse) response).sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            return;
+        } catch (AuthorizationException e) {
+            ((HttpServletResponse) response).sendError(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
             return;
         }
 

@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-public class InmemoryMemberRepository implements MemberRepository {
+public class InMemoryMemberRepository implements MemberRepository {
     public static final Member ADMIN_MEMBER = new Member("a@a.com", "password", "a", "", Set.of("ADMIN"));
     public static final Member USER_MEMBER = new Member("b@b.com", "password", "b", "", Collections.emptySet());
     private static final Map<String, Member> members = new HashMap<>();

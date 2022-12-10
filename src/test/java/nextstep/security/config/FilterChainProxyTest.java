@@ -42,7 +42,7 @@ public class FilterChainProxyTest {
         filterChainProxy.doFilter(request, null, null);
 
         assertThat(loginTestFilter.count).isEqualTo(1);
-        assertThat(membersTestFilter.count).isEqualTo(0);
+        assertThat(membersTestFilter.count).isZero();
     }
 
     @Test
@@ -50,7 +50,7 @@ public class FilterChainProxyTest {
         HttpServletRequest request = new MockHttpServletRequest(HttpMethod.GET.name(), "/members");
         filterChainProxy.doFilter(request, null, null);
 
-        assertThat(loginTestFilter.count).isEqualTo(0);
+        assertThat(loginTestFilter.count).isZero();
         assertThat(membersTestFilter.count).isEqualTo(1);
     }
 
@@ -60,8 +60,8 @@ public class FilterChainProxyTest {
         filterChainProxy.doFilter(request, null, new MockFilterChain());
 
 
-        assertThat(loginTestFilter.count).isEqualTo(0);
-        assertThat(membersTestFilter.count).isEqualTo(0);
+        assertThat(loginTestFilter.count).isZero();
+        assertThat(membersTestFilter.count).isZero();
     }
 
     private static class TestFilter implements Filter {

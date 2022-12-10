@@ -5,14 +5,15 @@ import nextstep.security.userdetails.UserDetails;
 import nextstep.security.userdetails.UserDetailsService;
 
 public class TestUserDetailsService implements UserDetailsService {
-    private final TestUserInmemoryRepository testUserInmemoryRepository;
+    private final TestUserInMemoryRepository testUserInmemoryRepository;
 
-    public TestUserDetailsService(TestUserInmemoryRepository testUserInmemoryRepository) {
+    public TestUserDetailsService(TestUserInMemoryRepository testUserInmemoryRepository) {
         this.testUserInmemoryRepository = testUserInmemoryRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws AuthenticationException {
-        return testUserInmemoryRepository.findByUsername(username).orElseThrow(AuthenticationException::new);
+        return testUserInmemoryRepository.findByUsername(username)
+                .orElseThrow(AuthenticationException::new);
     }
 }

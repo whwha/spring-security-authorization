@@ -11,7 +11,6 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         this.userDetailsService = userDetailsService;
     }
 
-
     @Override
     public Authentication authenticate(Authentication authRequest) {
         String username = authRequest.getPrincipal().toString();
@@ -23,7 +22,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
             throw new AuthenticationException();
         }
 
-        return UsernamePasswordAuthentication.ofAuthenticated(username, password);
+        return UsernamePasswordAuthentication.ofAuthenticated(username, password, userDetails.getRoles());
     }
 
     @Override

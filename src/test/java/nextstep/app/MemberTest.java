@@ -1,9 +1,10 @@
 package nextstep.app;
 
 import nextstep.security.authentication.Authentication;
+import nextstep.security.authentication.Role;
 import nextstep.security.context.SecurityContextHolder;
 import nextstep.app.domain.Member;
-import nextstep.app.infrastructure.InmemoryMemberRepository;
+import nextstep.app.infrastructure.InMemoryMemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,8 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class MemberTest {
-    private static final Member TEST_ADMIN_MEMBER = InmemoryMemberRepository.ADMIN_MEMBER;
-    private static final Member TEST_USER_MEMBER = InmemoryMemberRepository.USER_MEMBER;
+    private static final Member TEST_ADMIN_MEMBER = InMemoryMemberRepository.ADMIN_MEMBER;
+    private static final Member TEST_USER_MEMBER = InMemoryMemberRepository.USER_MEMBER;
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,7 +38,7 @@ public class MemberTest {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertThat(authentication.isAuthenticated()).isTrue();
-        assertThat(authentication.getAuthorities()).contains("ADMIN");
+        assertThat(authentication.getAuthorities()).contains(Role.ADMIN.name());
     }
 
     @Test

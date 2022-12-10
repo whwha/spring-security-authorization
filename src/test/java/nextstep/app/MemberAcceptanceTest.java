@@ -4,7 +4,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import nextstep.app.domain.Member;
-import nextstep.app.infrastructure.InmemoryMemberRepository;
+import nextstep.app.infrastructure.InMemoryMemberRepository;
+import nextstep.app.ui.dto.MemberDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,7 +17,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MemberAcceptanceTest extends AcceptanceTest {
-    private static final Member TEST_MEMBER = InmemoryMemberRepository.ADMIN_MEMBER;
+    private static final Member TEST_MEMBER = InMemoryMemberRepository.ADMIN_MEMBER;
 
     @Test
     void get_members_after_form_login() {
@@ -41,7 +42,7 @@ public class MemberAcceptanceTest extends AcceptanceTest {
                 .extract();
 
         assertThat(memberResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
-        List<Member> members = memberResponse.jsonPath().getList(".", Member.class);
-        assertThat(members.size()).isEqualTo(2);
+        List<MemberDto> members = memberResponse.jsonPath().getList(".", MemberDto.class);
+        assertThat(members).hasSize(2);
     }
 }

@@ -1,5 +1,6 @@
 package nextstep.security.fixture;
 
+import nextstep.security.authentication.Role;
 import nextstep.security.userdetails.BaseUser;
 
 import java.util.HashMap;
@@ -8,8 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class TestUserInmemoryRepository {
-    public static final BaseUser TEST_MEMBER_1 = new BaseUser("a@a.com", "password");
+public class TestUserInMemoryRepository {
+    public static final BaseUser TEST_MEMBER_1 = new BaseUser("a@a.com", "password", Role.ADMIN);
     public static final BaseUser TEST_MEMBER_2 = new BaseUser("b@b.com", "password");
     private static final Map<String, BaseUser> users = new HashMap<>();
 
