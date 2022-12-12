@@ -30,7 +30,7 @@ public class MemberAcceptanceTest extends AcceptanceTest {
                 .when()
                 .post("/login")
                 .then().log().all()
-                .extract();;
+                .extract();
 
         ExtractableResponse<Response> memberResponse = RestAssured.given().log().all()
                 .cookies(loginResponse.cookies())
