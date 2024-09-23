@@ -27,4 +27,9 @@ public class InmemoryMemberRepository implements MemberRepository {
     public List<Member> findAll() {
         return members.values().stream().collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public void save(Member member) {
+        members.put(member.getEmail(), member);
+    }
 }
