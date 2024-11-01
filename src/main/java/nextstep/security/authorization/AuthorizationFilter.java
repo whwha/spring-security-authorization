@@ -13,6 +13,12 @@ import java.io.IOException;
 
 public class AuthorizationFilter extends OncePerRequestFilter {
 
+    private final RoleHierarchy roleHierarchy;
+
+    public AuthorizationFilter(RoleHierarchy roleHierarchy) {
+        this.roleHierarchy = roleHierarchy;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -32,7 +38,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             }
 
             return authentication.getAuthorities().stream()
-                    .anyMatch(authority -> authority.equals("ADMIN"));
+                    .anyMatch(authority -> roleHierarchy.check(authority, "ADMIN"));
         }
 
         if (httpRequest.getRequestURI().equals("/members/me")) {
@@ -40,7 +46,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 throw new AuthenticationException();
             }
 
-            return authentication.isAuthenticated();
+            return authentication.getAuthorities().stream()
+                    .anyMatch(authority -> roleHierarchy.check(authority, "USER"));
         }
 
         if (httpRequest.getRequestURI().equals("/search")) {

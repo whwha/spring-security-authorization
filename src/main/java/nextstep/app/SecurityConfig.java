@@ -6,6 +6,7 @@ import nextstep.security.authentication.AuthenticationException;
 import nextstep.security.authentication.BasicAuthenticationFilter;
 import nextstep.security.authentication.UsernamePasswordAuthenticationFilter;
 import nextstep.security.authorization.AuthorizationFilter;
+import nextstep.security.authorization.RoleHierarchy;
 import nextstep.security.authorization.SecuredMethodInterceptor;
 import nextstep.security.config.DefaultSecurityFilterChain;
 import nextstep.security.config.DelegatingFilterProxy;
@@ -45,10 +46,11 @@ public class SecurityConfig {
     public SecuredMethodInterceptor securedMethodInterceptor() {
         return new SecuredMethodInterceptor();
     }
-//    @Bean
-//    public SecuredAspect securedAspect() {
-//        return new SecuredAspect();
-//    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        return new RoleHierarchy("ADMIN > USER");
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain() {
@@ -57,7 +59,7 @@ public class SecurityConfig {
                         new SecurityContextHolderFilter(),
                         new UsernamePasswordAuthenticationFilter(userDetailsService()),
                         new BasicAuthenticationFilter(userDetailsService()),
-                        new AuthorizationFilter()
+                            new AuthorizationFilter(roleHierarchy())
                 )
         );
     }
