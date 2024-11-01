@@ -39,10 +39,6 @@ public class MemberController {
     @GetMapping("/members/me")
     public ResponseEntity<Member> me() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            throw new AuthenticationException();
-        }
-
         String email = authentication.getPrincipal().toString();
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(RuntimeException::new);
