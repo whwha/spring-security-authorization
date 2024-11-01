@@ -1,4 +1,4 @@
-package nextstep.security.userdetils;
+package nextstep.security.userdetails;
 
 public interface UserDetails {
     String getUsername();
