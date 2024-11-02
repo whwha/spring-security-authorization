@@ -1,45 +1,30 @@
 package nextstep.security.authorization;
 
+import nextstep.security.access.RequestMatcher;
+import nextstep.security.access.RequestMatcherEntry;
 import nextstep.security.authentication.Authentication;
-import nextstep.security.authentication.AuthenticationException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public class RequestAuthorizationManager implements AuthorizationManager<HttpServletRequest> {
-    private final RoleHierarchy roleHierarchy;
+    private final List<RequestMatcherEntry<AuthorizationManager>> mappings;
 
-    public RequestAuthorizationManager(RoleHierarchy roleHierarchy) {
-        this.roleHierarchy = roleHierarchy;
+    public RequestAuthorizationManager(List<RequestMatcherEntry<AuthorizationManager>> mappings) {
+        this.mappings = mappings;
     }
 
     @Override
     public AuthorizationDecision check(Authentication authentication, HttpServletRequest request) {
-        if (request.getRequestURI().equals("/members")) {
-            if (authentication == null) {
-                throw new AuthenticationException();
+        for (RequestMatcherEntry<AuthorizationManager> mapping : mappings) {
+            RequestMatcher matcher = mapping.getRequestMatcher();
+            if (matcher.matches(request)) {
+                AuthorizationManager manager = mapping.getEntry();
+
+                return manager.check(authentication, request);
             }
-
-            boolean isGranted = authentication.getAuthorities().stream()
-                    .anyMatch(authority -> roleHierarchy.check(authority, "ADMIN"));
-
-            return new AuthorizationDecision(isGranted);
         }
 
-        if (request.getRequestURI().equals("/members/me")) {
-            if (authentication == null) {
-                throw new AuthenticationException();
-            }
-
-            boolean isGranted = authentication.getAuthorities().stream()
-                    .anyMatch(authority -> roleHierarchy.check(authority, "USER"));
-
-            return new AuthorizationDecision(isGranted);
-        }
-
-        if (request.getRequestURI().equals("/search")) {
-            return new AuthorizationDecision(true);
-        }
-
-        throw new ForbiddenException();
+        return new AuthorizationDecision(true);
     }
 }
