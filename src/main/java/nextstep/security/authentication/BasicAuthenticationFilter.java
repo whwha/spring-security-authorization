@@ -34,9 +34,9 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Authentication authenticate = this.authenticationManager.authenticate(authentication);
+            Authentication authResult = this.authenticationManager.authenticate(authentication);
             SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(authenticate);
+            context.setAuthentication(authResult);
             SecurityContextHolder.setContext(context);
 
             filterChain.doFilter(request, response);
