@@ -13,47 +13,25 @@ import java.io.IOException;
 
 public class AuthorizationFilter extends OncePerRequestFilter {
 
-    private final RoleHierarchy roleHierarchy;
-
-    public AuthorizationFilter(RoleHierarchy roleHierarchy) {
-        this.roleHierarchy = roleHierarchy;
-    }
-
+    private final AuthorizationManager<HttpServletRequest> authorizationManager =
+            new RequestAuthorizationManager(new RoleHierarchy("ADMIN > USER"));
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isGranted = checkAuthorization(authentication, request);
-
-        if (!isGranted) {
-            throw new ForbiddenException();
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuthorizationDecision decision = authorizationManager.check(authentication, request);
+            if (decision == null || !decision.isGranted()) {
+                throw new ForbiddenException();
+            }
+        } catch (AuthenticationException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        } catch (ForbiddenException e) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
         }
+
         filterChain.doFilter(request, response);
-    }
-
-    private boolean checkAuthorization(Authentication authentication, HttpServletRequest request) {
-        if (request.getRequestURI().equals("/members")) {
-            if (authentication == null) {
-                throw new AuthenticationException();
-            }
-            return authentication.getAuthorities()
-                    .stream()
-                    .anyMatch(authority -> roleHierarchy.check(authority, "ADMIN"));
-        }
-
-        if (request.getRequestURI().equals("/members/me")) {
-            if (authentication == null) {
-                throw new AuthenticationException();
-            }
-            return authentication.getAuthorities()
-                    .stream()
-                    .anyMatch(authority -> roleHierarchy.check(authority, "USER"));
-        }
-
-        if (request.getRequestURI().equals("/search")) {
-            return true;
-        }
-
-        return false;
     }
 }
