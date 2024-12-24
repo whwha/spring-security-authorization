@@ -13,8 +13,11 @@ import java.io.IOException;
 
 public class AuthorizationFilter extends OncePerRequestFilter {
 
-    private final AuthorizationManager<HttpServletRequest> authorizationManager =
-            new RequestAuthorizationManager(new RoleHierarchy("ADMIN > USER"));
+    private final AuthorizationManager<HttpServletRequest> authorizationManager;
+
+    public AuthorizationFilter(AuthorizationManager<HttpServletRequest> authorizationManager) {
+        this.authorizationManager = authorizationManager;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
