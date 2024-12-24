@@ -5,6 +5,8 @@ import nextstep.app.domain.MemberRepository;
 import nextstep.security.access.AnyRequestMatcher;
 import nextstep.security.access.MvcRequestMatcher;
 import nextstep.security.access.RequestMatcherEntry;
+import nextstep.security.access.hierarchicalroles.RoleHierarchy;
+import nextstep.security.access.hierarchicalroles.RoleHierarchyImpl;
 import nextstep.security.authentication.AuthenticationException;
 import nextstep.security.authentication.BasicAuthenticationFilter;
 import nextstep.security.authentication.UsernamePasswordAuthenticationFilter;
@@ -64,7 +66,10 @@ public class SecurityConfig {
 
     @Bean
     public RoleHierarchy roleHierarchy() {
-        return new RoleHierarchy("ADMIN > USER");
+        return RoleHierarchyImpl.with()
+                .role("ADMIN")
+                .implies("USER")
+                .build();
     }
 
     @Bean
